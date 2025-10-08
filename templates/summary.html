@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Survey Summary{% endblock %}
+
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+{% endblock %}
+
+{% block content %}
+<h2>Survey Results Summary</h2>
+<!-- https://jinja.palletsprojects.com/en/stable/templates/ -->
+<h3>Text Responses</h3>
+<ul>
+{% for result in results %}
+    <li>{{ result.text_input }}</li>
+{% endfor %}
+</ul>
+
+<h3>Additional Comments</h3>
+<ul>
+{% for result in results %}
+    {% if result.checkbox and result.textarea_input %}
+        <li>{{ result.textarea_input }}</li>
+    {% endif %}
+{% endfor %}
+</ul>
+
+<h3>Favorite Color Distribution</h3>
+<canvas id="radioChart" width="400" height="200"></canvas>
+
+<h3>Research Area Distribution</h3>
+<canvas id="selectChart" width="400" height="200"></canvas>
+
+<h3>Responses Per Day</h3>
+<canvas id="timeChart" width="400" height="200"></canvas>
+
+<script>
+// create a for loop, if not exist, set to 0, else add 1
+var radioCounts = {};
+{% for result in results %}
+    var choice = "{{ result.radio_choice }}";
+    radioCounts[choice] = (radioCounts[choice] || 0) + 1;
+{% endfor %}
+
+new Chart(document.getElementById('radioChart'), {
+    type: 'bar',
+    data: {
+        labels: Object.keys(radioCounts),
+        datasets: [{
+            label: 'Favorite Color',
+            data: Object.values(radioCounts)
+        }]
+    }
+});
+
+var selectCounts = {};
+{% for result in results %}
+    var choice = "{{ result.select_choice }}";
+    selectCounts[choice] = (selectCounts[choice] || 0) + 1;
+{% endfor %}
+
+new Chart(document.getElementById('selectChart'), {
+    type: 'bar',
+    data: {
+        labels: Object.keys(selectCounts),
+        datasets: [{
+            label: 'Research Area',
+            data: Object.values(selectCounts)
+        }]
+    }
+});
+
+var timeData = [];
+var dateCounts = {};
+{% for result in results %}
+    var date = "{{ result.timestamp[:10] }}";
+    dateCounts[date] = (dateCounts[date] || 0) + 1;
+{% endfor %}
+
+Object.keys(dateCounts).forEach(date => {
+    timeData.push({
+        x: date,
+        y: dateCounts[date]
+    });
+});
+
+// https://www.chartjs.org/docs/latest/axes/cartesian/time.html#time-units
+new Chart(document.getElementById('timeChart'), {
+    type: 'line',
+    data: {
+        datasets: [{
+            label: 'Responses Per Day',
+            data: timeData
+        }]
+    },
+    options: {
+        scales: {
+            x: {
+                type: 'time',
+                time: {
+                    unit: 'day'
+                }
+            }
+        }
+    }
+});
+</script>
+
+<a href="/" class="pure-button" style="margin-top: 20px;">Return to Home</a>
+{% endblock %}

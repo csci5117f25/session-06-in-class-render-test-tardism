@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Survey Consent{% endblock %}
+
+{% block content %}
+<h2>Welcome to Our Survey</h2>
+<p>Please click one of the buttons below to indicate whether you consent to participate in this survey.</p>
+
+<form action="/survey" method="get" style="display: inline;">
+    <button type="submit" class="pure-button pure-button-primary">I Consent</button>
+</form>
+
+<form action="/decline" method="get" style="display: inline; margin-left: 10px;">
+    <button type="submit" class="pure-button">I Decline</button>
+</form>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Survey Form{% endblock %}
+
+{% block extra_head %}
+<script>
+function toggleTextarea() {
+    var checkbox = document.getElementById('checkbox');
+    var textarea = document.getElementById('textarea_input');
+    if (checkbox.checked) {
+        textarea.style.display = 'block';
+    } else {
+        textarea.style.display = 'none';
+    }
+}
+</script> 
+{% endblock %}
+
+{% block content %}
+<h2>Survey Questions</h2>
+
+<form action="/submit" method="post" class="pure-form pure-form-stacked">
+    <fieldset>
+        <label for="text_input">What is your name? (min 3 characters)</label>
+        <input type="text" id="text_input" name="text_input" required minlength="3" class="pure-input-1">
+
+        <label>What is your favorite color?</label>
+        <label class="pure-radio">
+            <input type="radio" name="radio_choice" value="red" required> Red
+        </label>
+        <label class="pure-radio">
+            <input type="radio" name="radio_choice" value="blue"> Blue
+        </label>
+        <label class="pure-radio">
+            <input type="radio" name="radio_choice" value="green"> Green
+        </label>
+
+        <label for="select_choice">What is your research area?</label>
+        <select id="select_choice" name="select_choice" class="pure-input-1">
+            <option value="Programming Languages">Programming Languages</option>
+            <option value="ML">ML</option>
+            <option value="AI">AI</option>
+            <option value="HCI">HCI</option>
+        </select>
+<!-- https://www.w3schools.com/howto/howto_js_display_checkbox_text.asp -->
+        <label class="pure-checkbox">
+            <input type="checkbox" id="checkbox" name="checkbox" onclick="toggleTextarea()"> Additional comments?
+        </label>
+
+        <textarea id="textarea_input" name="textarea_input" placeholder="Additional comments..." style="display: none; width: 100%; height: 100px; margin-top: 10px;"></textarea>
+
+        <button type="submit" class="pure-button pure-button-primary" style="margin-top: 20px;">Next</button>
+    </fieldset>
+</form>
+{% endblock %}
